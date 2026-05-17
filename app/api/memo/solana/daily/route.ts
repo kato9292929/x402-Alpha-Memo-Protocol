@@ -1,9 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { withX402, SolanaAddress } from "x402-next";
 import { getSolanaDailyData } from "@/lib/nansen";
 import { generateDailyMemo } from "@/lib/claude";
 import { getMemo, setMemo, getSolanaDailyKey, getTodayString, generateMemoId } from "@/lib/kv";
 
-export async function GET() {
+const SOLANA_WALLET = (process.env.SOLANA_WALLET_ADDRESS || "11111111111111111111111111111111") as SolanaAddress;
+
+async function handler(_req: NextRequest): Promise<NextResponse<unknown>> {
   try {
     const today = getTodayString();
     const cacheKey = getSolanaDailyKey(today);
@@ -34,3 +37,9 @@ export async function GET() {
     return NextResponse.json({ error: "Failed to generate Solana daily memo" }, { status: 500 });
   }
 }
+
+export const GET = withX402(handler, SOLANA_WALLET, {
+  price: "$1.00",
+  network: "solana",
+  config: { description: "APAC Daily Memo - Solana" },
+});

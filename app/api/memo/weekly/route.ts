@@ -1,9 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { withX402 } from "x402-next";
 import { getWeeklyData } from "@/lib/nansen";
 import { generateWeeklyMemo } from "@/lib/claude";
 import { getMemo, setMemo, getWeeklyKey, getTodayString, generateMemoId } from "@/lib/kv";
 
-export async function GET() {
+const WALLET = (process.env.WALLET_ADDRESS || "0x0000000000000000000000000000000000000000") as `0x${string}`;
+
+async function handler(_req: NextRequest): Promise<NextResponse<unknown>> {
   try {
     const today = getTodayString();
     const weekStart = new Date();
@@ -38,3 +41,9 @@ export async function GET() {
     return NextResponse.json({ error: "Failed to generate weekly memo" }, { status: 500 });
   }
 }
+
+export const GET = withX402(handler, WALLET, {
+  price: "$3.00",
+  network: "base",
+  config: { description: "Weekly Deep Dive Report" },
+});
