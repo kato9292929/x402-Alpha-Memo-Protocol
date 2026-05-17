@@ -4,7 +4,7 @@ import { getSolanaDailyData } from "@/lib/nansen";
 import { generateDailyMemo } from "@/lib/claude";
 import { getMemo, setMemo, getSolanaDailyKey, getTodayString, generateMemoId } from "@/lib/kv";
 
-const SOLANA_WALLET = (process.env.SOLANA_WALLET_ADDRESS || "11111111111111111111111111111111") as SolanaAddress;
+const SOLANA_WALLET = (process.env.SOLANA_WALLET_ADDRESS ?? "11111111111111111111111111111111") as SolanaAddress;
 
 async function handler(_req: NextRequest): Promise<NextResponse<unknown>> {
   try {

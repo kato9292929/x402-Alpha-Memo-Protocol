@@ -1,4 +1,10 @@
-// Middleware is intentionally minimal — payment enforcement is handled
-// per-route via withX402 wrappers in each API route file, keeping the
-// Edge Function well under the 1 MB size limit.
-export {};
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function middleware(_request: NextRequest) {
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: [],
+};

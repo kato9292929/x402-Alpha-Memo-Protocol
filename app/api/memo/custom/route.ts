@@ -4,7 +4,7 @@ import { getCustomData } from "@/lib/nansen";
 import { generateCustomMemo } from "@/lib/claude";
 import { getMemo, setMemo, getCustomKey, generateMemoId } from "@/lib/kv";
 
-const WALLET = (process.env.WALLET_ADDRESS || "0x0000000000000000000000000000000000000000") as `0x${string}`;
+const WALLET = (process.env.WALLET_ADDRESS ?? "0x0000000000000000000000000000000000000000") as `0x${string}`;
 
 async function handler(req: NextRequest): Promise<NextResponse<unknown>> {
   try {
