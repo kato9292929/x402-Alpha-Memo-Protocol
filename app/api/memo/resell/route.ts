@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
       memoId,
       resellPriceUsd,
       sellerWallet,
-      protocolWallet: process.env.PROTOCOL_WALLET,
+      protocolWallet: process.env.PROTOCOL_WALLET ?? process.env.WALLET_ADDRESS ?? "0x0000000000000000000000000000000000000000",
       protocolFeePercent: 20,
       sellerPercent: 80,
       listedAt: new Date().toISOString(),
