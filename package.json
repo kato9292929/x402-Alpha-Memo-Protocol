@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.96.0",
+    "@coinbase/x402": "^2.1.0",
     "@rainbow-me/rainbowkit": "^2.2.11",
     "@solana/wallet-adapter-base": "^0.9.27",
     "@solana/wallet-adapter-phantom": "^0.9.29",
@@ -18,14 +19,17 @@
     "@solana/web3.js": "^1.98.4",
     "@tanstack/react-query": "^5.100.10",
     "@vercel/kv": "^3.0.0",
+    "@x402/core": "^2.13.0",
+    "@x402/evm": "^2.13.0",
+    "@x402/next": "^2.13.0",
+    "@x402/svm": "^2.13.0",
     "next": "15.5.18",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "viem": "^2.49.3",
-    "wagmi": "^2.19.5",
-    "x402-next": "^1.2.0"
+    "viem": "2.49.0",
+    "wagmi": "^2.19.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -34,5 +38,8 @@
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "viem": "2.49.0"
   }
 }

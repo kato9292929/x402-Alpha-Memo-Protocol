@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { withX402 } from "x402-next";
+import { withX402 } from "@x402/next";
 import { getCustomData } from "@/lib/nansen";
 import { generateCustomMemo } from "@/lib/claude";
 import { getMemo, setMemo, getCustomKey, generateMemoId } from "@/lib/kv";
+import { x402Server, WALLET_BASE, WALLET_SOLANA, BASE_NETWORK, SOLANA_NETWORK, CORS_HEADERS } from "@/lib/x402";
 
-const WALLET = (process.env.WALLET_ADDRESS ?? "0x0000000000000000000000000000000000000000") as `0x${string}`;
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
+}
 
 async function handler(req: NextRequest): Promise<NextResponse<unknown>> {
   try {
@@ -16,13 +19,16 @@ async function handler(req: NextRequest): Promise<NextResponse<unknown>> {
     };
 
     if (!target || !chain || !focusArea) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400, headers: CORS_HEADERS }
+      );
     }
 
     const cacheKey = getCustomKey(target, chain);
     const cached = await getMemo(cacheKey);
     if (cached) {
-      return NextResponse.json(cached);
+      return NextResponse.json(cached, { headers: CORS_HEADERS });
     }
 
     const nansenData = await getCustomData(target, chain);
@@ -40,15 +46,25 @@ async function handler(req: NextRequest): Promise<NextResponse<unknown>> {
 
     await setMemo(cacheKey, memo, 3600);
 
-    return NextResponse.json(memo);
+    return NextResponse.json(memo, { headers: CORS_HEADERS });
   } catch (error) {
     console.error("Custom memo error:", error);
-    return NextResponse.json({ error: "Failed to generate custom memo" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to generate custom memo", detail: String(error) },
+      { status: 502, headers: CORS_HEADERS }
+    );
   }
 }
 
-export const POST = withX402(handler, WALLET, {
-  price: "$5.00",
-  network: "base",
-  config: { description: "Custom Alpha Report" },
-});
+export const POST = withX402(
+  handler,
+  {
+    accepts: [
+      { scheme: "exact", price: "$5.00", network: BASE_NETWORK, payTo: WALLET_BASE },
+      { scheme: "exact", price: "$5.00", network: SOLANA_NETWORK, payTo: WALLET_SOLANA },
+    ],
+    description: "Custom Token/Wallet Alpha Report",
+    mimeType: "application/json",
+  },
+  x402Server,
+);
